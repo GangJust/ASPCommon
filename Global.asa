@@ -1,0 +1,35 @@
+<object runat="server" scope="application" id="CookieMap" progid="Scripting.Dictionary"></object>
+
+<script language="vbscript" runat="server">
+
+	sub Application_OnStart
+
+	end sub
+
+	sub Application_OnEnd
+		set Application.staticObjects("CookieMap") = nothing
+	end sub
+
+	sub Session_OnStart
+		Application.lock
+		Application.unlock
+	end sub
+
+	sub Session_OnEnd
+		Application.lock
+			call removeSession()
+		Application.unlock
+	end sub
+
+	'会话过期，移除该会话的登录Id
+	sub removeSession()
+		dim sesId
+		sesId = session("WWWSESSION")
+		Application("info") = "remove: " & sesId
+
+		'Application.staticObjects("CookieMap")
+		if CookieMap.exists(sesId) then
+			CookieMap.remove(sesId)
+		end if
+	end sub
+</script>
